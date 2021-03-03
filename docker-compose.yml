@@ -207,7 +207,7 @@ services:
         restart: unless-stopped
         network_mode: "bridge"
         ports:
-            - '${IP_ADDRESS}:80:80'
+            - '${IP_ADDRESS}:8910:80'
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
@@ -359,6 +359,8 @@ services:
             - './radarr:/config'
             - '${DLDIR}/completed:/data/completed'
             - '${MOVIEDIR}:/movies'
+			- '/home/bill/mediabox/content/movies1:/movies1'
+            - '/home/bill/mediabox/content/movies2:/movies2'
             - '/etc/localtime:/etc/localtime:ro'
 
     # ----------------------------------------
@@ -398,6 +400,8 @@ services:
             - './sonarr:/config'
             - '${DLDIR}/completed:/data/completed'
             - '${TVDIR}:/tv'
+            - '/home/bill/mediabox/content/tv1:/tv1'
+            - '/home/bill/mediabox/content/tv2:/tv2'
             - '/etc/localtime:/etc/localtime:ro'
 
     # ----------------------------------------
@@ -455,3 +459,24 @@ services:
         volumes:
             - '/var/run/docker.sock:/var/run/docker.sock'
 
+    # ----------------------------------------
+    # locast2plex
+    # ----------------------------------------
+    locast2plex:
+        image: tgorg/locast2plex
+        container_name: locast2plex
+        ports:
+            - '${IP_ADDRESS}:6077:6077'
+            - '${IP_ADDRESS}:1900:1900/udp'
+        restart: unless-stopped
+        network_mode: "bridge"
+        environment:
+            - username=email_addy
+            - 'password=password'
+            - external_addy=${IP_ADDRESS}
+            - external_port=6077
+            - debug=yes
+            - PUID=${PUID}
+            - PGID=${PGID}
+        volumes:
+            - './locast2plex:/app/config'
