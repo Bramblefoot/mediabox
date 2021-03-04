@@ -359,7 +359,7 @@ services:
             - './radarr:/config'
             - '${DLDIR}/completed:/data/completed'
             - '${MOVIEDIR}:/movies'
-	    - '/home/bill/mediabox/content/movies1:/movies1'
+            - '/home/bill/mediabox/content/movies1:/movies1'
             - '/home/bill/mediabox/content/movies2:/movies2'
             - '/etc/localtime:/etc/localtime:ro'
 
