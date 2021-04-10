@@ -67,6 +67,14 @@ icon = "muximux-copy2"
 color = "#6fa8dc"
 enabled = "true"
 
+[Glances]
+name = "Glances"
+url = "http://locip:61208"
+scale = 1
+icon = "muximux-eye-plus"
+color = "#6aa84f"
+enabled = "true"
+
 [Headphones]
 name = "Headphones"
 url = "http://locip:8282"
@@ -96,6 +104,14 @@ url = "http://locip:8686"
 scale = 1
 icon = "muximux-music"
 color = "#93c47d"
+enabled = "true"
+
+[Metube]
+name = "Metube"
+url = "http://locip:8281"
+scale = 1
+icon = "muximux-youtube"
+color = "#cc0000"
 enabled = "true"
 
 [Minio]
@@ -136,6 +152,14 @@ url = "http://locip:3579"
 scale = 1
 icon = "muximux-plex"
 color = "#f9be03"
+enabled = "true"
+
+[Overseerr]
+name = "Overseerr"
+url = "http://locip:5055"
+scale = 1
+icon = "muximux-search"
+color = "#674ea7"
 enabled = "true"
 
 [Plex]
