@@ -435,6 +435,7 @@ services:
             - '${MOVIEDIR}:/movies'
             - '/home/bill/mediabox/content/movies1:/movies1'
             - '/home/bill/mediabox/content/movies2:/movies2'
+            - '/home/bill/mediabox/content/4kmovies:/4kmovies'
             - '/etc/localtime:/etc/localtime:ro'
 
     # ----------------------------------------
@@ -476,6 +477,7 @@ services:
             - '${TVDIR}:/tv'
             - '/home/bill/mediabox/content/tv1:/tv1'
             - '/home/bill/mediabox/content/tv2:/tv2'
+            - '/home/bill/mediabox/content/4ktv:/4ktv'
             - '/etc/localtime:/etc/localtime:ro'
 
     # ----------------------------------------
