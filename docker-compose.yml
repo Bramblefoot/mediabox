@@ -13,24 +13,6 @@ version: '3.5'
 
 services:
 
-    # ----------------------------------------
-    # COUCHPOTATO
-    # ----------------------------------------
-    couchpotato:
-        image: ghcr.io/linuxserver/couchpotato
-        container_name: couchpotato
-        restart: unless-stopped
-        network_mode: "bridge"
-        ports:
-            - '${IP_ADDRESS}:5050:5050'
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-        volumes:
-            - './couchpotato:/config'
-            - '${DLDIR}/completed:/downloads'
-            - '${MOVIEDIR}:/movies'
-            - '/etc/localtime:/etc/localtime:ro'
 
     # ----------------------------------------
     # DELUGEVPN
@@ -82,42 +64,7 @@ services:
         volumes:
             - '/var/run/docker.sock:/var/run/docker.sock'
 
-    # ----------------------------------------
-    # DUPLICATI
-    # ----------------------------------------
-    duplicati:
-        image: ghcr.io/linuxserver/duplicati
-        container_name: duplicati
-        restart: unless-stopped
-        network_mode: "bridge"
-        ports:
-            - '${IP_ADDRESS}:8200:8200'
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-        volumes:
-            - './duplicati:/config'
-            - './duplicati/backups:/backups'
-            - '${PWD}:/source'
-            - '/etc/localtime:/etc/localtime:ro'
 
-    # ----------------------------------------
-    # FLARESOLVERR
-    # ----------------------------------------
-    flaresolverr:
-        image: ghcr.io/flaresolverr/flaresolverr:latest
-        container_name: flaresolverr
-        restart: unless-stopped
-        network_mode: "bridge"
-        environment:
-            - LOG_LEVEL=${LOG_LEVEL:-info}
-            - LOG_HTML=${LOG_HTML:-false}
-            - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
-        ports:
-            - '${IP_ADDRESS}:8191:8191'
-        volumes:
-            - /etc/localtime:/etc/localtime:ro
-            - ./flaresolverr:/storage
 
     # ----------------------------------------
     # GLANCES
@@ -139,24 +86,6 @@ services:
             - './glances:/config'
             - '/var/run/docker.sock:/var/run/docker.sock:ro'
 
-    # ----------------------------------------
-    # HEADPHONES
-    # ----------------------------------------
-    headphones:
-        image: ghcr.io/linuxserver/headphones
-        container_name: headphones
-        restart: unless-stopped
-        network_mode: "bridge"
-        ports:
-            - '${IP_ADDRESS}:8282:8181'
-        environment:
-            - PUID=${PUID}
-            - PGID=${PGID}
-            - TZ=${TZ}
-        volumes:
-            - './headphones:/config'
-            - '${DLDIR}/completed:/downloads'
-            - '${MUSICDIR}:/music'
 
     # ----------------------------------------
     # JACKETT
@@ -176,24 +105,6 @@ services:
             - '${DLDIR}/completed:/downloads'
             - '/etc/localtime:/etc/localtime:ro'
 
-    # ----------------------------------------
-    # JELLYFIN
-    # ----------------------------------------
-    jellyfin:
-        image: jellyfin/jellyfin
-        container_name: jellyfin
-        restart: unless-stopped
-        network_mode: "bridge"
-        user: "${PUID}:${PGID}"
-        ports:
-            - '${IP_ADDRESS}:8096:8096'
-        volumes:
-            - './jellyfin:/config'
-            - '${TVDIR}:/media/tv'
-            - '${MISCDIR}:/media/misc'
-            - '${MOVIEDIR}:/media/movies'
-            - '${MUSICDIR}:/media/music'
-            - '/etc/localtime:/etc/localtime:ro'
 
     # ----------------------------------------
     # LIDARR
@@ -214,44 +125,6 @@ services:
             - '${MUSICDIR}:/music'
             - '/etc/localtime:/etc/localtime:ro'
 
-    # ----------------------------------------
-    # METUBE
-    # ----------------------------------------
-    metube:
-        image: alexta69/metube
-        container_name: metube
-        restart: unless-stopped
-        user: "${PUID}:${PGID}"
-        network_mode: "bridge"
-        ports:
-            - '${IP_ADDRESS}:8281:8081'
-        volumes:
-            - '${MISCDIR}:/downloads'
-            - '/etc/localtime:/etc/localtime:ro'
-
-    # ----------------------------------------
-    # MINIO
-    # ----------------------------------------
-    minio:
-        image: minio/minio
-        container_name: minio
-        restart: unless-stopped
-        network_mode: "bridge"
-        ports:
-            - '${IP_ADDRESS}:9009:9000'
-        environment:
-            - MINIO_ACCESS_KEY=minio
-            - MINIO_SECRET_KEY=minio123
-        volumes:
-            - './minio:/root/.minio'
-            - '${PWD}:/export'
-        command: server /export
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://${IP_ADDRESS}:9009/minio/health/live"]
-            interval: 5m
-            timeout: 20s
-            retries: 3
-            start_period: 3m
 
     # ----------------------------------------
     # MUXIMUX
@@ -363,39 +236,6 @@ services:
         volumes:
             - ./overseerr:/config
 
-    # ----------------------------------------
-    # PLEX
-    # ----------------------------------------
-    plex:
-        container_name: plex
-        image: plexinc/pms-docker:${PMSTAG}
-        restart: unless-stopped
-        # network_mode: "host"
-        ports:
-            - '${IP_ADDRESS}:32400:32400/tcp'
-            - '${IP_ADDRESS}:3005:3005/tcp'
-            - '${IP_ADDRESS}:8324:8324/tcp'
-            - '${IP_ADDRESS}:32469:32469/tcp'
-            - '${IP_ADDRESS}:1900:1900/udp'
-            - '${IP_ADDRESS}:32410:32410/udp'
-            - '${IP_ADDRESS}:32412:32412/udp'
-            - '${IP_ADDRESS}:32413:32413/udp'
-            - '${IP_ADDRESS}:32414:32414/udp'
-        environment:
-            - PLEX_CLAIM=${PMSTOKEN}
-            - ADVERTISE_IP=http://${IP_ADDRESS}:32400/
-            - ALLOWED_NETWORKS=${CIDR_ADDRESS}
-            - PLEX_UID=${PUID}
-            - PLEX_GID=${PGID}
-        hostname: ${HOSTNAME}
-        volumes:
-            - './plex:/config'
-            - './plex/transcode:/transcode'
-            - '${TVDIR}:/data/tvshows'
-            - '${MISCDIR}:/data/misc'
-            - '${MOVIEDIR}:/data/movies'
-            - '${MUSICDIR}:/data/music'
-            - '/etc/localtime:/etc/localtime:ro'
 
     # ----------------------------------------
     # PORTAINER
@@ -435,27 +275,28 @@ services:
             - '${MOVIEDIR}:/movies'
             - '/home/bill/mediabox/content/movies1:/movies1'
             - '/home/bill/mediabox/content/movies2:/movies2'
-            - '/home/bill/mediabox/content/4kmovies:/4kmovies'
             - '/etc/localtime:/etc/localtime:ro'
-
+            
     # ----------------------------------------
-    # SICKCHILL
+    # RADARR 4K
     # ----------------------------------------
-    sickchill:
-        image: ghcr.io/linuxserver/sickchill
-        container_name: sickchill
+    radarr4k:
+        image: ghcr.io/linuxserver/radarr
+        container_name: radarr4k
         restart: unless-stopped
         network_mode: "bridge"
         ports:
-            - '${IP_ADDRESS}:8081:8081'
+            - '${IP_ADDRESS}:7879:7878'
         environment:
             - PUID=${PUID}
             - PGID=${PGID}
         volumes:
-            - './sickchill:/config'
-            - '${DLDIR}/completed:/downloads'
-            - '${TVDIR}:/tv'
+            - './radarr:/config'
+            - '${DLDIR}/completed:/data/completed'
+            - '${MOVIEDIR}:/movies'
+            - '/home/bill/mediabox/content/4kmovies:/4kmovies'
             - '/etc/localtime:/etc/localtime:ro'
+
 
     # ----------------------------------------
     # SONARR
@@ -477,9 +318,30 @@ services:
             - '${TVDIR}:/tv'
             - '/home/bill/mediabox/content/tv1:/tv1'
             - '/home/bill/mediabox/content/tv2:/tv2'
-            - '/home/bill/mediabox/content/4ktv:/4ktv'
             - '/etc/localtime:/etc/localtime:ro'
 
+    # ----------------------------------------
+    # SONARR 4K
+    # ----------------------------------------
+    sonarr4k:
+        image: ghcr.io/linuxserver/sonarr
+        container_name: sonarr4k
+        restart: unless-stopped
+        network_mode: "bridge"
+        ports:
+            - '${IP_ADDRESS}:8990:8989'
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
+        volumes:
+            - './sonarr:/config'
+            - '${DLDIR}/completed:/data/completed'
+            - '${TVDIR}:/tv'
+            - '/home/bill/mediabox/content/4ktv:/4ktv'
+            - '/etc/localtime:/etc/localtime:ro'
+            
+            
     # ----------------------------------------
     # SPEEDTEST
     # ----------------------------------------
@@ -535,24 +397,3 @@ services:
         volumes:
             - '/var/run/docker.sock:/var/run/docker.sock'
 
-    # ----------------------------------------
-    # locast2plex
-    # ----------------------------------------
-    locast2plex:
-        image: tgorg/locast2plex
-        container_name: locast2plex
-        ports:
-            - '${IP_ADDRESS}:6077:6077'
-            - '${IP_ADDRESS}:1900:1900/udp'
-        restart: unless-stopped
-        network_mode: "bridge"
-        environment:
-            - username=email_addy
-            - 'password=password'
-            - external_addy=${IP_ADDRESS}
-            - external_port=6077
-            - debug=yes
-            - PUID=${PUID}
-            - PGID=${PGID}
-        volumes:
-            - './locast2plex:/app/config'
