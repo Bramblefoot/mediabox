@@ -389,7 +389,7 @@ services:
     ports:
         - ${IP_ADDRESS}:5055:5055
     volumes:
-        - './overseerr:/app/config'
+        - './seerr:/app/config'
 
   # ----------------------------------------
   # PLEX
