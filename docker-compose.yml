@@ -220,7 +220,7 @@ services:
     restart: unless-stopped
     network_mode: "bridge"
     ports:
-        - '${IP_ADDRESS}:80:8080'
+                - '${IP_ADDRESS}:8910:8080'
     environment:
         - UID=${PUID}
         - GID=${PGID}
@@ -514,6 +514,27 @@ services:
         - './radarr:/config'
         - '${DLDIR}/completed:/data/completed'
         - '${MOVIEDIR}:/movies'
+        - '${MOVIEDIR}1:/movies1'
+        - '${MOVIEDIR}2:/movies2'
+        - '/etc/localtime:/etc/localtime:ro'
+
+  # ----------------------------------------
+  # RADARR 4K
+  # ----------------------------------------
+  radarr4k:
+    image: lscr.io/linuxserver/radarr
+    container_name: radarr4k
+    restart: unless-stopped
+    network_mode: "bridge"
+    ports:
+        - '${IP_ADDRESS}:7879:7878'
+    environment:
+        - PUID=${PUID}
+        - PGID=${PGID}
+    volumes:
+        - './radarr4k:/config'
+        - '${DLDIR}/completed:/data/completed'
+        - '${MOVIEDIR4K}:/4kmovies'
         - '/etc/localtime:/etc/localtime:ro'
 
   # ----------------------------------------
@@ -570,6 +591,28 @@ services:
         - './sonarr:/config'
         - '${DLDIR}/completed:/data/completed'
         - '${TVDIR}:/tv'
+        - '${TVDIR}1:/tv1'
+        - '${TVDIR}2:/tv2'
+        - '/etc/localtime:/etc/localtime:ro'
+
+  # ----------------------------------------
+  # SONARR 4K
+  # ----------------------------------------
+  sonarr4k:
+    image: lscr.io/linuxserver/sonarr
+    container_name: sonarr4k
+    restart: unless-stopped
+    network_mode: "bridge"
+    ports:
+        - '${IP_ADDRESS}:8990:8989'
+    environment:
+        - PUID=${PUID}
+        - PGID=${PGID}
+        - TZ=${TZ}
+    volumes:
+        - './sonarr4k:/config'
+        - '${DLDIR}/completed:/data/completed'
+        - '${TVDIR4K}:/4ktv'
         - '/etc/localtime:/etc/localtime:ro'
 
   # ----------------------------------------

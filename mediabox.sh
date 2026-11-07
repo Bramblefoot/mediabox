@@ -8,6 +8,7 @@ fi
 
 # See if we need to check GIT for updates
 if [ -e .env ]; then
+    cp -p .env 1.env || exit 1
     # Check for Updated docker-compose
     printf "Checking for update to docker-compose (If needed - You will be prompted for SUDO credentials).\\n\\n"
     onlinever=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "tag_name" | cut -d ":" -f2 | sed 's/"//g' | sed 's/,//g' | sed 's/ //g')
@@ -49,15 +50,19 @@ if [ -e 1.env ]; then
     pmstag=$(grep PMSTAG 1.env | cut -d = -f2)
     dldirectory=$(grep DLDIR 1.env | cut -d = -f2)
     tvdirectory=$(grep TVDIR 1.env | cut -d = -f2)
+    tvdirectory4k=$(grep TVDIR4K 1.env | cut -d = -f2)
     miscdirectory=$(grep MISCDIR 1.env | cut -d = -f2)
     moviedirectory=$(grep MOVIEDIR 1.env | cut -d = -f2)
+    moviedirectory4k=$(grep MOVIEDIR4K 1.env | cut -d = -f2)
     musicdirectory=$(grep MUSICDIR 1.env | cut -d = -f2)
     # Echo back the media directioies, and other info to see if changes are needed
     printf "These are the Media Directory paths currently configured.\\n"
     printf "Your DOWNLOAD Directory is: %s \\n" "$dldirectory"
     printf "Your TV Directory is: %s \\n" "$tvdirectory"
+    printf "Your 4K TV Directory is: %s \\n" "$tvdirectory4k"
     printf "Your MISC Directory is: %s \\n" "$miscdirectory"
     printf "Your MOVIE Directory is: %s \\n" "$moviedirectory"
+    printf "Your 4K MOVIE Directory is: %s \\n" "$moviedirectory4k"
     printf "Your MUSIC Directory is: %s \\n" "$musicdirectory"
     printf "\\n\\n"
     read  -r -p "Are these directiores still correct? (y/n) " diranswer "$(echo \n)"
@@ -131,6 +136,13 @@ read -r -p "Where do you store your MOVIE media? (Please use full path - /path/t
 read -r -p "Where do you store your MUSIC media? (Please use full path - /path/to/music ): " musicdirectory
 fi
 
+if [ -z "$tvdirectory4k" ] || [ "$diranswer" == "n" ]; then
+read -r -p "Where do you store your 4K TV media? (Please use full path - /path/to/4ktv; leave blank for the default ): " tvdirectory4k
+fi
+if [ -z "$moviedirectory4k" ] || [ "$diranswer" == "n" ]; then
+read -r -p "Where do you store your 4K MOVIE media? (Please use full path - /path/to/4kmovies; leave blank for the default ): " moviedirectory4k
+fi
+
 # Create the directory structure
 if [ -z "$dldirectory" ]; then
     mkdir -p content/completed
@@ -144,6 +156,10 @@ if [ -z "$tvdirectory" ]; then
     mkdir -p content/tv
     tvdirectory="$PWD/content/tv"
 fi
+if [ -z "$tvdirectory4k" ]; then
+    mkdir -p content/4ktv
+    tvdirectory4k="$PWD/content/4ktv"
+fi
 if [ -z "$miscdirectory" ]; then
     mkdir -p content/misc
     miscdirectory="$PWD/content/misc"
@@ -151,6 +167,10 @@ fi
 if [ -z "$moviedirectory" ]; then
     mkdir -p content/movies
     moviedirectory="$PWD/content/movies"
+fi
+if [ -z "$moviedirectory4k" ]; then
+    mkdir -p content/4kmovies
+    moviedirectory4k="$PWD/content/4kmovies"
 fi
 if [ -z "$musicdirectory" ]; then
     mkdir -p content/music
@@ -256,8 +276,10 @@ echo "DOCKERGRP=$DOCKERGRP"
 echo "PWD=$PWD"
 echo "DLDIR=$dldirectory"
 echo "TVDIR=$tvdirectory"
+echo "TVDIR4K=$tvdirectory4k"
 echo "MISCDIR=$miscdirectory"
 echo "MOVIEDIR=$moviedirectory"
+echo "MOVIEDIR4K=$moviedirectory4k"
 echo "MUSICDIR=$musicdirectory"
 echo "PIAUNAME=$piauname"
 echo "PIAPASS=$piapass"
